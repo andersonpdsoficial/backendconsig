@@ -1,5 +1,3 @@
-# contrib/serializers.py
-
 from rest_framework import serializers
 from .models import Consignataria, Servidor, ConsultaMargemAthenas, Reserva
 import requests
@@ -15,7 +13,31 @@ class ServidorSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ConsultaMargemAthenasSerializer(serializers.ModelSerializer):
-    # Adicionando um campo para a matrícula
+    margem_total = serializers.CharField(required=False)
+    margem_disponivel = serializers.CharField(required=False)
+
+    class Meta:
+        model = ConsultaMargemAthenas
+        fields = ['id', 'margem_total', 'margem_disponivel', 'servidor', 'consignataria']
+
+class ReservaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reserva
+        fields = '__all__'
+
+# Serializadores para a versão 2
+
+class ConsignatariaSerializerV2(serializers.ModelSerializer):
+    class Meta:
+        model = Consignataria
+        fields = '__all__'
+
+class ServidorSerializerV2(serializers.ModelSerializer):
+    class Meta:
+        model = Servidor
+        fields = '__all__'
+
+class ConsultaMargemAthenasSerializerV2(serializers.ModelSerializer):
     matricula = serializers.IntegerField(write_only=True, required=False)
 
     class Meta:
@@ -25,10 +47,9 @@ class ConsultaMargemAthenasSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         matricula = validated_data.pop('matricula', None)
         
-        # Fazendo a chamada à API externa se a matrícula for fornecida
         if matricula:
             headers = {
-                "Authorization": "Token E3B8B8F271BF233A0A8D2657A1D3FA06"
+                "Authorization": "Token 682770e6bbe57c2736138619840a564bd0775486"
             }
 
             response = requests.get(
@@ -40,7 +61,6 @@ class ConsultaMargemAthenasSerializer(serializers.ModelSerializer):
                 data = response.json()
                 if data['count'] > 0:
                     resultado = data['results'][0]
-                    # Adiciona os dados da API externa ao validated_data
                     validated_data['margem_total'] = resultado['margem_consignada_total']
                     validated_data['margem_disponivel'] = resultado['margem_consignada_livre']
                 else:
@@ -48,11 +68,10 @@ class ConsultaMargemAthenasSerializer(serializers.ModelSerializer):
             else:
                 raise serializers.ValidationError("Erro ao consultar a API externa")
 
-        # Cria a instância do modelo com os dados validados
         consulta = ConsultaMargemAthenas.objects.create(**validated_data)
         return consulta
 
-class ReservaSerializer(serializers.ModelSerializer):
+class ReservaSerializerV2(serializers.ModelSerializer):
     class Meta:
         model = Reserva
         fields = '__all__'

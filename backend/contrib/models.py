@@ -1,19 +1,16 @@
-# contrib/models.py
-
 from django.db import models
-from django.contrib.auth.models import User  # Importando o modelo de usuário padrão do Django
 from .mixins import AuditoriaAbstractMixin  # Importando o mixin de auditoria
 
-class Consignataria(models.Model):
+class Consignataria(AuditoriaAbstractMixin):
     nome = models.CharField(max_length=256, null=False, blank=False)
     cpf_cnpj = models.CharField(max_length=14, unique=True, null=False, blank=False)
 
     def __str__(self):
         return self.nome
 
-class Servidor(models.Model):
+class Servidor(AuditoriaAbstractMixin):
     nome = models.CharField(max_length=255, null=False, blank=False)
-    matricula = models.IntegerField(unique=True, null=False, blank=False)
+    matricula = models.CharField(max_length=9, unique=True, null=False, blank=False)
 
     def __str__(self):
         return self.nome
@@ -37,7 +34,7 @@ class Reserva(AuditoriaAbstractMixin):
     EXPIRADO = 3
 
     SITUACOES = (
-        (EM_ANALISE, "EM ANALISE"),
+        (EM_ANALISE, "EM ANÁLISE"),
         (DEFERIDO, "DEFERIDO"),
         (INDEFERIDO, "INDEFERIDO"),
         (EXPIRADO, "EXPIRADO"),
