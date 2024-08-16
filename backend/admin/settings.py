@@ -47,13 +47,15 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.locale.LocaleMiddleware',  # Middleware de localização
 ]
 
 ROOT_URLCONF = 'admin.urls'
 
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',  # Substitua pelo URL correto do seu frontend
+]
 CORS_ALLOW_ALL_ORIGINS = True
 
 TEMPLATES = [
@@ -109,6 +111,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ],
@@ -119,6 +122,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
 }
+
 
 # Variável de ambiente para a API Athenas
 THENAS_API = "https://athenas.defensoria.ro.def.br/api/consignado/"
