@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework import permissions
+#from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
@@ -15,7 +15,7 @@ schema_view = get_schema_view(
         license=openapi.License(name="BSD License"),
     ),
     public=False,  # Swagger não é acessível publicamente
-    permission_classes=(permissions.IsAuthenticated,),  # Requer autenticação para acessar o Swagger
+    #permission_classes=(permissions.IsAuthenticated,),  # Requer autenticação para acessar o Swagger
 )
 
 urlpatterns = [

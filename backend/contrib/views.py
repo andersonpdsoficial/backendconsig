@@ -1,17 +1,22 @@
+
+from contrib.filters import ConsultaMargemAthenasFilter
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from rest_framework.authentication import BasicAuthentication, SessionAuthentication
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import FormParser, MultiPartParser
 from django.shortcuts import get_object_or_404
 from .models import Consignataria, Servidor, ConsultaMargemAthenas, Reserva
-from .serializers import ConsignatariaSerializer, ServidorSerializer, ConsultaMargemAthenasSerializer, ReservaSerializer, ConsignatariaSerializerV2, ServidorSerializerV2, ConsultaMargemAthenasSerializerV2, ReservaSerializerV2
-import requests
+#from rest_framework.authentication import BasicAuthentication, SessionAuthentication
+#from rest_framework.permissions import IsAuthenticated
+from .serializers import (ConsignatariaSerializer, ServidorSerializer, 
+                          ConsultaMargemAthenasSerializer, ReservaSerializer,
+                          ConsignatariaSerializerV2, ServidorSerializerV2, 
+                          ConsultaMargemAthenasSerializerV2, ReservaSerializerV2)
+from django_filters.rest_framework import DjangoFilterBackend
 
 class ConsignatariaViewSet(viewsets.ModelViewSet):
     queryset = Consignataria.objects.all()
-    authentication_classes = [BasicAuthentication, SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    #authentication_classes = [BasicAuthentication, SessionAuthentication]
+    #permission_classes = [IsAuthenticated]
     serializer_class = ConsignatariaSerializer  # Default serializer class
 
     def get_serializer_class(self):
@@ -32,8 +37,8 @@ class ConsultaMargemAthenasViewSet(viewsets.ModelViewSet):
     queryset = ConsultaMargemAthenas.objects.all()
     serializer_class = ConsultaMargemAthenasSerializer
     parser_classes = (MultiPartParser, FormParser)
-    authentication_classes = [BasicAuthentication, SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = ConsultaMargemAthenasFilter
 
     def create(self, request, *args, **kwargs):
         servidor_id = request.data.get('servidor')
@@ -48,7 +53,7 @@ class ConsultaMargemAthenasViewSet(viewsets.ModelViewSet):
             "Authorization": "Token 682770e6bbe57c2736138619840a564bd0775486"
         }
 
-        response = requests.get(
+        response = request.get(
             f"https://athenas.defensoria.ro.def.br/api/consignado/?matricula={servidor.matricula}",
             headers=headers
         )
@@ -78,7 +83,7 @@ class ConsultaMargemAthenasViewSet(viewsets.ModelViewSet):
             return Response({"error": "Erro ao consultar a API externa"}, status=response.status_code)
 
     def retrieve(self, request, *args, **kwargs):
-        matricula = request.query_params.get('matricula')
+        matricula = request.query_params.get('matricula', None)
 
         if not matricula:
             return Response({"error": "Matrícula não fornecida."}, status=status.HTTP_400_BAD_REQUEST)
@@ -87,7 +92,7 @@ class ConsultaMargemAthenasViewSet(viewsets.ModelViewSet):
             "Authorization": "Token 682770e6bbe57c2736138619840a564bd0775486"
         }
 
-        response = requests.get(
+        response = request.get(
             f"https://athenas.defensoria.ro.def.br/api/consignado/?matricula={matricula}",
             headers=headers
         )
@@ -109,8 +114,8 @@ class ConsultaMargemAthenasViewSet(viewsets.ModelViewSet):
 class ReservaViewSet(viewsets.ModelViewSet):
     queryset = Reserva.objects.all()
     serializer_class = ReservaSerializer
-    authentication_classes = [BasicAuthentication, SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    #authentication_classes = [BasicAuthentication, SessionAuthentication]
+    #permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         request.data['cadastrado_por'] = request.user.pk  # Usando o ID do usuário autenticado

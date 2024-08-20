@@ -5,16 +5,20 @@ import requests
 class ConsignatariaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Consignataria
-        fields = '__all__'
+        fields = [
+            'id', 'nome', 'cpf_cnpj'
+        ]
 
 class ServidorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Servidor
-        fields = '__all__'
+        fields = [
+            'id', 'nome', 'matricula'
+        ]
 
 class ConsultaMargemAthenasSerializer(serializers.ModelSerializer):
-    margem_total = serializers.CharField(required=False)
-    margem_disponivel = serializers.CharField(required=False)
+    margem_total = serializers.CharField(required=True)
+    margem_disponivel = serializers.CharField(required=True)
 
     class Meta:
         model = ConsultaMargemAthenas
@@ -30,7 +34,7 @@ class ReservaSerializer(serializers.ModelSerializer):
 class ConsignatariaSerializerV2(serializers.ModelSerializer):
     class Meta:
         model = Consignataria
-        fields = '__all__'
+        fields = 'id', 'nome', 'cpf_cnpj'
 
 class ServidorSerializerV2(serializers.ModelSerializer):
     class Meta:
