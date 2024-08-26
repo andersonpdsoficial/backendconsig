@@ -23,7 +23,30 @@ SECRET_KEY = config("SECRET_KEY", default='django-insecure-b7fho_vzrb$^0uzz$12kd
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+# Permitir todas as origens (para desenvolvimento)
+CORS_ORIGIN_ALLOW_ALL = True
+# Permitir credenciais
+CORS_ALLOW_CREDENTIALS = True
+
+# Outros métodos permitidos
+CORS_ALLOW_METHODS = [
+    'GET',
+    'POST',
+    'PUT',
+    'PATCH',
+    'DELETE',
+    'OPTIONS',
+]
+# Cabeçalhos permitidos
+CORS_ALLOW_HEADERS = [
+    'content-type',
+    'authorization',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -47,16 +70,14 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.locale.LocaleMiddleware',  # Middleware de localização
+
 ]
 
 ROOT_URLCONF = 'admin.urls'
 
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',  # Substitua pelo URL correto do seu frontend
-]
-CORS_ALLOW_ALL_ORIGINS = True
+
 
 TEMPLATES = [
     {
@@ -121,11 +142,14 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
+     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.QueryParameterVersioning'
 }
 
 
 # Variável de ambiente para a API Athenas
-THENAS_API = "https://athenas.defensoria.ro.def.br/api/consignado/"
+ATHENAS_API = config(
+    "API_ATHENAS_URL", default="https://athenas.defensoria.ro.def.br/api/consignado/"
+)
+TOKEN_ATHENAS = config("Token", default="682770e6bbe57c2736138619840a564bd0775486")
 
-TOKEN_ATHENAS='682770e6bbe57c2736138619840a564bd0775486'
 

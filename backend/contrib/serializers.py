@@ -19,6 +19,7 @@ class ServidorSerializer(serializers.ModelSerializer):
 class ConsultaMargemAthenasSerializer(serializers.ModelSerializer):
     margem_total = serializers.CharField(required=True)
     margem_disponivel = serializers.CharField(required=True)
+    #matricula = serializers.IntegerField(write_only=True, required=False)
 
     class Meta:
         model = ConsultaMargemAthenas
@@ -74,6 +75,7 @@ class ConsultaMargemAthenasSerializerV2(serializers.ModelSerializer):
 
         consulta = ConsultaMargemAthenas.objects.create(**validated_data)
         return consulta
+
 
 class ReservaSerializerV2(serializers.ModelSerializer):
     class Meta:

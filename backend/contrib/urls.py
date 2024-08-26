@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from django.conf import settings
 from .views import ConsignatariaViewSet, ServidorViewSet, ConsultaMargemAthenasViewSet, ReservaViewSet
-
 
 # Cria um router padrão para registrar os viewsets
 router = DefaultRouter()

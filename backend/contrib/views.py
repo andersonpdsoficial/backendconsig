@@ -12,6 +12,7 @@ from .serializers import (ConsignatariaSerializer, ServidorSerializer,
                           ConsignatariaSerializerV2, ServidorSerializerV2, 
                           ConsultaMargemAthenasSerializerV2, ReservaSerializerV2)
 from django_filters.rest_framework import DjangoFilterBackend
+import requests
 
 class ConsignatariaViewSet(viewsets.ModelViewSet):
     queryset = Consignataria.objects.all()
@@ -53,7 +54,7 @@ class ConsultaMargemAthenasViewSet(viewsets.ModelViewSet):
             "Authorization": "Token 682770e6bbe57c2736138619840a564bd0775486"
         }
 
-        response = request.get(
+        response = requests.get(
             f"https://athenas.defensoria.ro.def.br/api/consignado/?matricula={servidor.matricula}",
             headers=headers
         )
@@ -92,7 +93,7 @@ class ConsultaMargemAthenasViewSet(viewsets.ModelViewSet):
             "Authorization": "Token 682770e6bbe57c2736138619840a564bd0775486"
         }
 
-        response = request.get(
+        response = requests.get(
             f"https://athenas.defensoria.ro.def.br/api/consignado/?matricula={matricula}",
             headers=headers
         )
