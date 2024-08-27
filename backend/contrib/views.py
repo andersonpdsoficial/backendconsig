@@ -1,18 +1,20 @@
-
-from contrib.filters import ConsultaMargemAthenasFilter
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+
 from rest_framework.parsers import FormParser, MultiPartParser
 from django.shortcuts import get_object_or_404
 from .models import Consignataria, Servidor, ConsultaMargemAthenas, Reserva
+
 #from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 #from rest_framework.permissions import IsAuthenticated
 from .serializers import (ConsignatariaSerializer, ServidorSerializer, 
-                          ConsultaMargemAthenasSerializer, ReservaSerializer,
+                          ConsultaMargemAthenasSerializer, ReservaSerializer, 
                           ConsignatariaSerializerV2, ServidorSerializerV2, 
                           ConsultaMargemAthenasSerializerV2, ReservaSerializerV2)
 from django_filters.rest_framework import DjangoFilterBackend
+from contrib.filters import  ServidorFilter
 import requests
+
 
 class ConsignatariaViewSet(viewsets.ModelViewSet):
     queryset = Consignataria.objects.all()
@@ -28,6 +30,9 @@ class ConsignatariaViewSet(viewsets.ModelViewSet):
 class ServidorViewSet(viewsets.ModelViewSet):
     queryset = Servidor.objects.all()
     serializer_class = ServidorSerializer  # Default serializer class
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = ServidorFilter
+
 
     def get_serializer_class(self):
         if self.request.version == 'v2':
@@ -38,8 +43,7 @@ class ConsultaMargemAthenasViewSet(viewsets.ModelViewSet):
     queryset = ConsultaMargemAthenas.objects.all()
     serializer_class = ConsultaMargemAthenasSerializer
     parser_classes = (MultiPartParser, FormParser)
-    filter_backends = (DjangoFilterBackend,)
-    filterset_class = ConsultaMargemAthenasFilter
+   
 
     def create(self, request, *args, **kwargs):
         servidor_id = request.data.get('servidor')

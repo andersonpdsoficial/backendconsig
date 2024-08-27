@@ -1,11 +1,12 @@
 import django_filters
-from .models import ConsultaMargemAthenas
+
+from .models import Servidor
 
 
 #Filtrar matricula do servidor para pesquisa no frontend
-class ConsultaMargemAthenasFilter(django_filters.FilterSet):
-    servidor__matricula = django_filters.CharFilter(field_name='servidor__matricula', lookup_expr='iexact')
+class ServidorFilter(django_filters.FilterSet):
+    matricula = django_filters.CharFilter(field_name='matricula', lookup_expr='icontains')
     
     class Meta:
-        model = ConsultaMargemAthenas
-        fields = '__all__'
+        model = Servidor
+        fields = ['matricula']
