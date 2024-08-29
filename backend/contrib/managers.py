@@ -1,7 +1,7 @@
 
 # Bibliotecas de terceiros
 from django.db.models import QuerySet, Manager
-from django.conf import settings
+
 
 class AuditoriaBaseQuerySet(QuerySet):
     def ativos(self):
