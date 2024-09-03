@@ -147,34 +147,30 @@ class ReservaViewSet(viewsets.ModelViewSet):
     # authentication_classes = [BasicAuthentication, SessionAuthentication]
     # permission_classes = [IsAuthenticated]
 
-
     def create(self, request, *args, **kwargs):
-        request.data["cadastrado_por"] = (
-            request.user.pk
-        )  # Usando o ID do usuário autenticado
+        # Cria uma cópia mutável dos dados da solicitação
+        data = request.data.copy()
+        data["cadastrado_por"] = request.user.pk  # Usando o ID do usuário autenticado
 
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-
     def update(self, request, *args, **kwargs):
-        request.data["modificado_por"] = (
-            request.user.pk
-        )  # Usando o ID do usuário autenticado
+        # Cria uma cópia mutável dos dados da solicitação
+        data = request.data.copy()
+        data["modificado_por"] = request.user.pk  # Usando o ID do usuário autenticado
 
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data)
+        serializer = self.get_serializer(instance, data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        instance.desativar(
-            request.user
-        )  # Passando o usuário atual para o método desativar
+        instance.desativar(request.user)  # Passando o usuário atual para o método desativar
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
