@@ -152,6 +152,12 @@ class ReservaViewSet(viewsets.ModelViewSet):
         data = request.data.copy()
         data["cadastrado_por"] = request.user.pk  # Usando o ID do usuário autenticado
 
+# Assume que `consulta_id` é passado para associar a reserva com a consulta específica
+        consulta_id = request.data.get("consulta_id")
+        if consulta_id:
+            consulta = get_object_or_404(ConsultaMargemAthenas, id=consulta_id)
+            data["consulta"] = consulta.pk
+            
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
