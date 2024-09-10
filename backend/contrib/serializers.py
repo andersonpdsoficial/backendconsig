@@ -1,8 +1,13 @@
 from rest_framework import serializers
 from .models import Consignataria, Servidor, ConsultaMargemAthenas, Reserva
-import requests
 
 class ConsignatariaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Consignataria
+        fields = ["id", "nome", "cpf_cnpj"]
+
+class ConsignatariaSerializerV2(serializers.ModelSerializer):
+    # Adicione ou modifique os campos conforme necessário
     class Meta:
         model = Consignataria
         fields = ["id", "nome", "cpf_cnpj"]
@@ -12,11 +17,21 @@ class ServidorSerializer(serializers.ModelSerializer):
         model = Servidor
         fields = ["id", "nome", "matricula"]
 
+class ServidorSerializerV2(serializers.ModelSerializer):
+    class Meta:
+        model = Servidor
+        fields = ["id", "nome", "matricula"]
+
 class ConsultaMargemAthenasSerializer(serializers.ModelSerializer):
     margem_total = serializers.CharField(required=True)
     margem_disponivel = serializers.CharField(required=True)
-    #matricula = serializers.IntegerField(write_only=True, required=False)
 
+    class Meta:
+        model = ConsultaMargemAthenas
+        fields = ["id", "margem_total", "margem_disponivel", "servidor", "consignataria"]
+
+class ConsultaMargemAthenasSerializerV2(serializers.ModelSerializer):
+    # Adicione ou modifique os campos conforme necessário
     class Meta:
         model = ConsultaMargemAthenas
         fields = ["id", "margem_total", "margem_disponivel", "servidor", "consignataria"]
@@ -24,26 +39,28 @@ class ConsultaMargemAthenasSerializer(serializers.ModelSerializer):
 class ReservaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reserva
-        fields = "__all__"
+        fields = [
+            "id", "valor", "consulta", "prazo_inicial", "prazo_final",
+            "situacao", "contrato", "matricula", "cpf", "nome",
+            "margem_disponivel", "margem_total", "vencimento_parcela",
+            "folha_desconto", "total_financiado", "liquido_liberado",
+            "liberacao_credito", "cet", "observacoes", "quantidade_parcelas",
+            "valor_parcelas", "juros_mensal", "valor_iof", "carencia_dias",
+            "valor_carencia", "vinculo", "margem_antes", "margem_apos"
+        ]
 
-# Serializadores para a versão 2
-
-class ConsignatariaSerializerV2(serializers.ModelSerializer):
+class ReservaSerializerV2(serializers.ModelSerializer):
     class Meta:
-        model = Consignataria
-        fields = "id", "nome", "cpf_cnpj"
-
-class ServidorSerializerV2(serializers.ModelSerializer):
-    class Meta:
-        model = Servidor
-        fields = "__all__"
-
-class ConsultaMargemAthenasSerializerV2(serializers.ModelSerializer):
-    matricula = serializers.IntegerField(write_only=True, required=False)
-
-    class Meta:
-        model = ConsultaMargemAthenas
-        fields = "__all__"
+        model = Reserva
+        fields = [
+            "id", "valor", "consulta", "prazo_inicial", "prazo_final",
+            "situacao", "contrato", "matricula", "cpf", "nome",
+            "margem_disponivel", "margem_total", "vencimento_parcela",
+            "folha_desconto", "total_financiado", "liquido_liberado",
+            "liberacao_credito", "cet", "observacoes", "quantidade_parcelas",
+            "valor_parcelas", "juros_mensal", "valor_iof", "carencia_dias",
+            "valor_carencia", "vinculo", "margem_antes", "margem_apos"
+        ]
 
     def create(self, validated_data):
         matricula = validated_data.pop("matricula", None)
@@ -61,22 +78,12 @@ class ConsultaMargemAthenasSerializerV2(serializers.ModelSerializer):
                 if data["count"] > 0:
                     resultado = data["results"][0]
                     validated_data["margem_total"] = resultado["margem_consignada_total"]
-                    validated_data["margem_disponivel"] = resultado[
-                        "margem_consignada_livre"
-                    ]
-
+                    validated_data["margem_disponivel"] = resultado["margem_consignada_livre"]
                 else:
                     raise serializers.ValidationError(
                         "Nenhum resultado encontrado para a matrícula fornecida."
                     )
-
             else:
                 raise serializers.ValidationError("Erro ao consultar a API externa")
-        consulta = ConsultaMargemAthenas.objects.create(**validated_data)
-        return consulta
-
-
-class ReservaSerializerV2(serializers.ModelSerializer):
-    class Meta:
-        model = Reserva
-        fields = "__all__"
+        
+        return super().create(validated_data)
