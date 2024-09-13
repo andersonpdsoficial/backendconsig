@@ -100,6 +100,7 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = "admin.wsgi.application"
 
 DATABASES = {

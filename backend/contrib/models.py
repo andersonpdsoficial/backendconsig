@@ -67,6 +67,7 @@ class Reserva(AuditoriaAbstractMixin):
     vinculo = models.CharField(max_length=255, null=True, blank=True)
     margem_antes = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     margem_apos = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)  # Novo campo de e-mail
 
     def __str__(self):
         return f"Reserva {self.contrato} - {self.valor}"

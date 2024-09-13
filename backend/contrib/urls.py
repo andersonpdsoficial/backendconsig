@@ -19,6 +19,7 @@ router.register(
 router.register(r"reservas", ReservaViewSet)
 
 
+
 # Define as URLs do aplicativo 'contrib'
 urlpatterns = [
     path("", include(router.urls)),  # Inclui as URLs geradas pelo router

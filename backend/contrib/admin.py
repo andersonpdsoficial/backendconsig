@@ -36,6 +36,7 @@ class ReservaAdmin(admin.ModelAdmin):
         "prazo_inicial",
         "prazo_final",
         "cadastrado_por",
+        "email",
     )  # Campos exibidos na lista
     search_fields = ("contrato",)  # Campos pesquisáveis
     list_filter = ("situacao",)  # Filtros disponíveis

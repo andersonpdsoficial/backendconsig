@@ -163,3 +163,4 @@ class ReservaViewSet(viewsets.ModelViewSet):
         if self.request.version == "v2":
             return ReservaSerializerV2
         return self.serializer_class
+    
